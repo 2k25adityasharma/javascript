@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>theame change using js</title>
+
+</head>
+<style>
+    :root{
+        --background:white;
+        --boxbackground:black;
+        --text:white;
+ }
+ :root.dark{
+    --background:black;
+        --boxbackground:white;
+        --text:black;
+    
+ }
+    body{
+        background-color:var(--background);
+        display: flex;
+        height: 100vh;
+        transition: background-color 0.3s ease;
+    }
+ .box{
+    height: 100px;
+    width: 100px;
+   background-color: var(--boxbackground);
+   color: var(--text);
+    padding: 60px 60px;
+    margin: auto ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    cursor: pointer;
+ }
+ 
+</style>
+  
+
+<body>
+    
+    <div class="box" id ="white">
+       light mode
+    </div>
+
+
+    <script>
+        const box = document.querySelector('.box')
+        const body = document.querySelector('body')
+
+        box.addEventListener('click',function(e){
+            if(e.target.id=='white'){
+                body.style.backgroundColor ='black'
+                box.style.backgroundColor='white'
+                box.style.color='black'
+                box.textContent='dark mode'
+                e.target.id ='black'
+             }
+             else{
+                 body.style.backgroundColor ='white'
+                box.style.backgroundColor='black'
+                box.style.color='white'
+                box.textContent='light mode'
+                e.target.id ='white'
+             }
+        })
+
+    </script>
+</body>
+</html>
