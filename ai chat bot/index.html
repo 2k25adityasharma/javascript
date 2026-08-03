@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot</title>
+    
+</head>
+<style>*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#111827;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.container{
+    width:420px;
+    height:650px;
+    background:#1f2937;
+    border-radius:15px;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    box-shadow:0 0 20px rgba(0,0,0,.4);
+}
+
+.chat-header{
+    background:#2563eb;
+    color:white;
+    padding:18px;
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.chat-box{
+    flex:1;
+    overflow-y:auto;
+    padding:15px;
+}
+
+.user-message{
+    background:#2563eb;
+    color:white;
+    width:fit-content;
+    margin-left:auto;
+    margin-bottom:15px;
+    padding:12px;
+    border-radius:12px;
+    max-width:75%;
+}
+
+.bot-message{
+    background:#374151;
+    color:white;
+    width:fit-content;
+    margin-bottom:15px;
+    padding:12px;
+    border-radius:12px;
+    max-width:75%;
+}
+
+.input-area{
+    display:flex;
+    padding:15px;
+    background:#111827;
+}
+
+input{
+    flex:1;
+    padding:12px;
+    border:none;
+    outline:none;
+    border-radius:8px;
+    font-size:16px;
+}
+
+button{
+    margin-left:10px;
+    padding:12px 18px;
+    border:none;
+    background:#2563eb;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1d4ed8;
+}</style>
+<body>
+
+<div class="container">
+    <div class="chat-header">
+        🤖 AI Chatbot
+    </div>
+
+    <div class="chat-box" id="chatBox">
+        <div class="bot-message">
+            Hello! How can I help you today?
+        </div>
+    </div>
+
+    <div class="input-area">
+        <input
+            type="text"
+            id="userInput"
+            placeholder="Ask me anything..."
+        >
+        <button id="sendBtn">Send</button>
+    </div>
+</div>
+
+
+
+</body>
+<script>
+const chatBox = document.getElementById("chatBox");
+const userInput = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
+
+// 👇 OpenRouter API Key
+const API_KEY = "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";
+
+function addMessage(text, className) {
+    const div = document.createElement("div");
+    div.className = className;
+    div.innerText = text;
+
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+async function askAI(question) {
+
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${API_KEY}`,
+            "Content-Type": "application/json",
+            "HTTP-Referer": window.location.origin,
+            "X-Title": "AI Chatbot"
+        },
+        body: JSON.stringify({
+            model: "poolside/laguna-s-2.1:free",
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a helpful AI assistant."
+                },
+                {
+                    role: "user",
+                    content: question
+                }
+            ]
+        })
+    });
+
+    const data = await response.json();
+
+    console.log("API Response:", data);
+
+    if (!response.ok) {
+        throw new Error(data.error?.message || "API Error");
+    }
+
+    if (
+        data.choices &&
+        data.choices.length > 0 &&
+        data.choices[0].message &&
+        data.choices[0].message.content
+    ) {
+        return data.choices[0].message.content;
+    }
+
+    return "No response from AI.";
+}
+
+async function sendMessage() {
+
+    const text = userInput.value.trim();
+
+    if (text === "") return;
+
+    addMessage(text, "user-message");
+    userInput.value = "";
+
+    const typing = document.createElement("div");
+    typing.className = "bot-message";
+    typing.innerText = "Typing...";
+    chatBox.appendChild(typing);
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    try {
+
+        const reply = await askAI(text);
+
+        typing.remove();
+
+        addMessage(reply, "bot-message");
+
+    } catch (err) {
+
+        console.error(err);
+
+        typing.remove();
+
+        addMessage("❌ " + err.message, "bot-message");
+    }
+}
+
+sendBtn.addEventListener("click", sendMessage);
+
+userInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+        sendMessage();
+    }
+});
+</script>
+</html>
