@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random User Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    *{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#0f172a,#1e3a8a);
+    padding:20px;
+}
+
+.container{
+    width:100%;
+    display:flex;
+    justify-content:center;
+}
+
+.card{
+    width:420px;
+    max-width:100%;
+    background:#fff;
+    padding:30px;
+    border-radius:18px;
+    text-align:center;
+    box-shadow:0 15px 35px rgba(0,0,0,.25);
+}
+
+h1{
+    color:white;
+    position:absolute;
+    top:40px;
+    text-align:center;
+    width:100%;
+    left:0;
+}
+
+.profile{
+    width:150px;
+    height:150px;
+    border-radius:50%;
+    object-fit:cover;
+    border:5px solid #2563eb;
+    margin-bottom:20px;
+}
+
+.name{
+    color:#222;
+    margin-bottom:15px;
+}
+
+.email,
+.country,
+.age{
+    margin:12px 0;
+    font-size:18px;
+    color:#555;
+}
+
+button{
+    margin-top:25px;
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
+    font-size:17px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    background:#1d4ed8;
+    transform:translateY(-2px);
+}
+
+button:active{
+    transform:scale(.97);
+}
+
+@media(max-width:500px){
+
+    .card{
+        padding:20px;
+    }
+
+    h1{
+        font-size:24px;
+        top:20px;
+    }
+
+    .profile{
+        width:120px;
+        height:120px;
+    }
+
+    .email,
+    .country,
+    .age{
+        font-size:16px;
+    }
+
+}
+</style>
+<body>
+
+    <div class="container">
+
+        <h1>👤 Random User Generator</h1>
+
+        <div class="card">
+
+            <img src="https://via.placeholder.com/150" alt="User Image" class="profile">
+
+            <h2 class="name">Name</h2>
+
+            <p class="email">
+                📧 Email
+            </p>
+
+            <p class="country">
+                🌍 Country
+            </p>
+
+            <p class="age">
+                🎂 Age
+            </p>
+
+            <button>Generate User</button>
+
+        </div>
+
+    </div>
+
+  
+
+</body>
+<script>
+ const button = document.querySelector("button");
+const name = document.querySelector(".name");
+const email = document.querySelector(".email");
+const image = document.querySelector(".profile");
+const country = document.querySelector(".country");
+
+    button.addEventListener("click",function(){
+        fetch("https://randomuser.me/api/").then((Response)=>{
+           return Response.json()
+        })
+        .then((data)=>{
+           const user= data.results[0]
+       name.innerText= user.name.first
+       email.innerText=user.email
+       country.innerText= user.location.country
+       image.src=user.picture.large
+        }).catch((err)=>{
+ name.innerText = "Loading...";
+email.innerText = "";
+country.innerText = "";
+
+    })
+    })
+</script>
+</html>
