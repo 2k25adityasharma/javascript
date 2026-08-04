@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#1e3c72,#2a5298);
+    padding:20px;
+}
+
+.container{
+    width:500px;
+    max-width:100%;
+    background:#fff;
+    padding:30px;
+    border-radius:18px;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+    text-align:center;
+}
+
+h1{
+    font-size:2rem;
+    color:#222;
+    margin-bottom:25px;
+}
+
+button{
+    border:none;
+    outline:none;
+    padding:14px 28px;
+    background:#2563eb;
+    color:#fff;
+    font-size:1rem;
+    border-radius:10px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    background:#1d4ed8;
+    transform:translateY(-2px);
+}
+
+button:active{
+    transform:scale(.96);
+}
+
+.joke-box{
+    margin-top:30px;
+    background:#f5f5f5;
+    border-radius:12px;
+    padding:20px;
+    min-height:160px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.setup{
+    font-size:1.2rem;
+    font-weight:600;
+    color:#222;
+    line-height:1.6;
+}
+
+.punchline{
+    margin-top:18px;
+    font-size:1.05rem;
+    color:#666;
+    font-style:italic;
+    line-height:1.6;
+}
+
+@media(max-width:600px){
+
+    .container{
+        width:100%;
+        padding:22px;
+    }
+
+    h1{
+        font-size:1.6rem;
+    }
+
+    button{
+        width:100%;
+        padding:13px;
+        font-size:1rem;
+    }
+
+    .setup{
+        font-size:1.05rem;
+    }
+
+    .punchline{
+        font-size:.95rem;
+    }
+
+}
+</style>
+<body>
+
+    <div class="container">
+
+        <h1>😂 Random Joke Generator</h1>
+
+        <button>Get Joke</button>
+
+        <div class="joke-box">
+
+            <p class="setup">
+                Click the button to get a joke.
+            </p>
+
+            <p class="punchline"></p>
+
+        </div>
+
+    </div>
+
+</body>
+<script>
+    let button = document.querySelector("button")
+    let punchline = document.getElementsByClassName("punchline")
+    let setup =document.getElementsByClassName("setup")
+    button.addEventListener("click",function(){
+      
+        setup[0].innerHTML="Loading...."
+        punchline[0].innerHTML=""
+
+
+
+       fetch("https://official-joke-api.appspot.com/random_joke").then((Response)=>{
+        return Response.json();
+       }).then((data)=>{
+         setup[0].innerText = data.setup;
+punchline[0].innerText = data.punchline;
+       }).catch((error) => {
+      punchline[0].innerText="try again"
+})
+      
+
+    })
+</script>
+</html>
