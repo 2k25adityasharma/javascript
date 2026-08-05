@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+ *{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:linear-gradient(135deg,#0F172A,#111827,#1E293B);
+    color:#fff;
+    padding:40px 20px;
+}
+
+.container{
+    width:90%;
+    max-width:1200px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+    font-size:42px;
+    color:#60A5FA;
+    margin-bottom:35px;
+    letter-spacing:1px;
+}
+
+/* Search */
+
+.search-box{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:15px;
+    margin-bottom:35px;
+    flex-wrap:wrap;
+}
+
+.search-box input{
+    width:420px;
+    max-width:100%;
+    padding:15px 18px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.08);
+    outline:none;
+    background:#1F2937;
+    color:#fff;
+    font-size:16px;
+    transition:.3s;
+}
+
+.search-box input::placeholder{
+    color:#94A3B8;
+}
+
+.search-box input:focus{
+    border-color:#3B82F6;
+    box-shadow:0 0 15px rgba(59,130,246,.35);
+}
+
+.search-box button{
+    padding:15px 28px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,#2563EB,#3B82F6);
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.search-box button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 25px rgba(37,99,235,.35);
+}
+
+/* Messages */
+
+.loading,
+.error{
+    text-align:center;
+    margin:20px 0;
+    font-size:18px;
+}
+
+.loading{
+    color:#60A5FA;
+}
+
+.error{
+    color:#EF4444;
+}
+
+/* Cards */
+
+.news-container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:25px;
+}
+
+.card{
+    background:rgba(31,41,55,.9);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    padding:22px;
+    transition:.35s;
+    box-shadow:0 12px 30px rgba(0,0,0,.35);
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    border-color:#3B82F6;
+    box-shadow:0 18px 40px rgba(37,99,235,.25);
+}
+
+.card h2{
+    font-size:22px;
+    color:#F8FAFC;
+    margin-bottom:15px;
+    line-height:1.4;
+}
+
+.card p{
+    color:#CBD5E1;
+    line-height:1.8;
+    font-size:15px;
+}
+
+/* Responsive */
+
+@media(max-width:768px){
+
+    h1{
+        font-size:34px;
+    }
+
+    .search-box{
+        flex-direction:column;
+    }
+
+    .search-box input,
+    .search-box button{
+        width:100%;
+    }
+
+    .card{
+        padding:18px;
+    }
+
+}
+
+@media(max-width:480px){
+
+    body{
+        padding:25px 15px;
+    }
+
+    h1{
+        font-size:28px;
+    }
+
+    .card h2{
+        font-size:20px;
+    }
+
+    .card p{
+        font-size:14px;
+    }
+
+}
+</style>
+<body>
+
+    <div class="container">
+
+        <h1>📰 News App</h1>
+
+        <div class="search-box">
+            <input type="text" placeholder="Search News...">
+            <button>Search</button>
+        </div>
+
+        <p class="loading"></p>
+        <p class="error"></p>
+
+        <div class="news-container">
+
+            <!-- News Cards JavaScript se aayenge -->
+
+        </div>
+
+    </div>
+
+    
+</body>
+<script>
+    
+    const input= document.querySelector('input')
+    const button = document.querySelector('button')
+    const loading = document.querySelector(".loading")
+    const error = document.querySelector(".error")
+    const newscontainer = document.querySelector(".news-container")
+
+  input.focus()
+    function searchNews(){
+if(input.value==""){
+            error.innerText="Please enter a topic"
+     return
+        }
+        error.innerText=""
+         loading.innerText = "Loading...";
+        const topic = "https://dummyjson.com/posts/search?q="+input.value
+       
+        input.value = "";
+        fetch(topic).then((res)=>{
+         
+      return res.json()
+        }).then((data)=>{
+      loading.innerText = "";
+
+   newscontainer.innerHTML = "";
+     
+   if(data.posts.length==0){
+    loading.innerText = "";
+error.innerText = "No news found!";
+return;
+   }
+      for(let i =0;i<data.posts.length;i++){
+    ///////////////////////////////////////////////////////
+    const card =document.createElement("div")
+    card.classList.add("card")
+
+const title = document.createElement("h2");
+title.innerText = data.posts[i].title
+
+const body = document.createElement("p");
+body.innerText = data.posts[i].body
+  
+card.appendChild(title);
+card.appendChild(body);
+
+newscontainer.appendChild(card);
+
+      }
+        }
+      ).catch((err)=>{
+          loading.innerText = "";
+       error.innerText= "Something Went Wrong...."
+      })
+
+    }
+
+
+    button.addEventListener("click", function () {
+    searchNews();
+});
+    input.addEventListener("keydown", function(event){
+    if(event.key === "Enter"){
+        searchNews();
+    }
+});
+  
+        
+
+</script>
+</html>
